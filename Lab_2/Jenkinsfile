@@ -1,0 +1,42 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Checkout') {
+            steps {
+                checkout scmGit(branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/SergeyOdintsov01/MLOps.git']])
+            }
+        }
+        stage('Install requirements(the same as in Lab_1)') {
+            steps {
+                sh 'pip install -r Lab_1/requirements.txt'
+            }
+        }
+        stage('Create dataset') {
+            steps {
+                sh 'python3 Lab_1/data_creation.py'
+            }
+        }
+        stage('Data Preprocessing') {
+            steps {
+                sh 'python3 Lab_1/model_preprocessing.py'
+            }
+        }
+        stage('Model Training') {
+            steps {
+                sh 'python3 Lab_1/model_preparation.py'
+            }
+        }
+        stage('Model Testing') {
+            steps {
+                sh 'python3 Lab_1/model_testing.py'
+            }
+        }
+    }
+    post {
+        always {
+            sh 'echo "Pipeline completed."'
+        }
+    }
+    
+}
